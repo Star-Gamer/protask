@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productivity Hub</title>
+    <link rel="stylesheet" href="home.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h2 class="logo">ProTask</h2>
+            <div class="nav-links">
+                <div class="theme-switcher">
+                    <label for="themeSelect">Theme:</label>
+                    <select id="themeSelect" class="theme-select">
+                        <option value="purple">Purple</option>
+                        <option value="blue">Blue</option>
+                        <option value="green">Green</option>
+                        <option value="orange">Orange</option>
+                        <option value="pink">Pink</option>
+                    </select>
+                </div>
+                <div class="user-profile">
+                    <div class="profile-info">
+                        <img id="profilePic" src="https://via.placeholder.com/40/667eea/ffffff?text=U" alt="Profile" class="profile-pic">
+                        <span id="navUsername" class="nav-username">User</span>
+                    </div>
+                    <div class="profile-dropdown">
+                        <div class="profile-header">
+                            <img id="profilePicModal" src="https://via.placeholder.com/80/667eea/ffffff?text=U" alt="Profile" class="profile-pic-large">
+                            <p id="userName">User</p>
+                            <button class="edit-profile-btn" id="editProfileBtn">Edit Profile</button>
+                        </div>
+                        <a href="index.html" class="logout-btn-small">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Profile Edit Modal -->
+    <div id="profileModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Edit Profile</h2>
+            <div class="modal-body">
+                <div class="profile-upload">
+                    <img id="profilePicPreview" src="https://via.placeholder.com/120/667eea/ffffff?text=U" alt="Profile Preview" class="profile-pic-preview">
+                    <input type="file" id="profilePicInput" accept="image/*" class="file-input">
+                    <button type="button" class="upload-btn">Change Picture</button>
+                </div>
+                <div class="name-input-group">
+                    <label for="userNameInput">Name:</label>
+                    <input type="text" id="userNameInput" placeholder="Enter your name" class="name-input">
+                </div>
+                <button id="saveProfileBtn" class="btn btn-primary">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Clock Section -->
+        <div class="clock-card">
+            <h3>Current Time</h3>
+            <div class="digital-clock" id="digitalClock">00:00:00</div>
+        </div>
+
+        <div class="main-content">
+            <!-- Pomodoro Section -->
+            <div class="pomodoro-card">
+                <div class="pomodoro-header">
+                    <h3>Pomodoro Timer</h3>
+                    <button class="minimize-btn" id="minimizeBtn" title="Minimize to desktop">↗</button>
+                </div>
+                
+                <!-- Current Subject Display (heading - always visible) -->
+                <div id="currentSubjectDisplay" class="current-subject" style="display: none; margin-bottom: 20px;"></div>
+
+                <!-- Timer & Subject Settings (Collapsible) -->
+                <div class="settings-container" id="settingsContainer">
+                    <div class="settings-toggle" id="settingsToggle" title="Click to expand timer settings">
+                        <span class="settings-icon">⏱️</span>
+                        <span class="settings-label" id="settingsLabel">Settings</span>
+                    </div>
+                    <div class="settings-content" id="settingsContent">
+                        <!-- Subject & Topic Selection -->
+                        <div class="subject-input-section">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                                <div>
+                                    <label for="subjectInput">Subject:</label>
+                                    <div class="subject-input-group">
+                                        <input type="text" id="subjectInput" placeholder="e.g., Mathematics..." class="subject-input">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="topicInput">Topic:</label>
+                                    <div class="subject-input-group">
+                                        <input type="text" id="topicInput" placeholder="e.g., Calculus..." class="subject-input">
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="btn btn-secondary" id="setSubjectBtn" style="width: 100%; margin-top: 8px;">Set</button>
+                        </div>
+
+                        <!-- Timer Settings -->
+                        <div class="timer-settings">
+                            <div class="timer-setting-row">
+                                <div class="timer-setting-item">
+                                    <label for="workDurationInput">Work Duration (minutes):</label>
+                                    <div class="timer-input-group">
+                                        <input type="number" id="workDurationInput" min="1" max="60" value="1" class="timer-input">
+                                        <button class="btn btn-secondary" id="setTimerBtn">Set</button>
+                                    </div>
+                                </div>
+                                <div class="timer-setting-item">
+                                    <label for="breakDurationInput">Break Duration (minutes):</label>
+                                    <div class="timer-input-group">
+                                        <input type="number" id="breakDurationInput" min="1" max="30" value="5" class="timer-input">
+                                        <button class="btn btn-secondary" id="setBreakBtn">Set</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="timer-display-info" id="timerInfo">Work: 1 min | Break: 5 min</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pomodoro-display" id="pomodoroDisplay">01:00</div>
+                <div class="pomodoro-controls">
+                    <button class="btn btn-primary" id="startPomodoroBtn">Start</button>
+                    <button class="btn btn-secondary" id="pausePomodoroBtn">Pause</button>
+                    <button class="btn btn-danger" id="resetPomodoroBtn">Reset</button>
+                </div>
+                
+                <!-- Session Statistics -->
+                <div class="session-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Today's Sessions:</span>
+                        <span class="stat-value" id="todaySessionCount">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Total Time:</span>
+                        <span class="stat-value" id="todayTotalTime">0h 0m</span>
+                    </div>
+                </div>
+
+                <!-- Session History -->
+                <div class="session-history-container">
+                    <div class="session-history-header">
+                        <h4>Session History</h4>
+                        <button class="btn btn-primary btn-small" id="generatePdfBtn">📄 Generate PDF Report</button>
+                    </div>
+                    <div class="session-list" id="sessionList">
+                        <p class="empty-message">No sessions recorded yet</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- To-Do List Section -->
+            <div class="todo-card">
+                <h3>Tasks</h3>
+                <div class="todo-input-container">
+                    <input type="text" id="taskInput" placeholder="Add a new task..." class="task-input">
+                    <button class="btn btn-primary" id="addTaskBtn">Add</button>
+                </div>
+                <ul class="task-list" id="taskList">
+                    <!-- Tasks will be added here -->
+                </ul>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <p class="progress-text"><span id="completedTasks">0</span> of <span id="totalTasks">0</span> tasks completed</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="home.js"></script>
+</body>
+</html>
